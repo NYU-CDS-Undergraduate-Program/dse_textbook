@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113006011-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-113006011-1');
+</script>
+
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Probability Overview</title>
+  <meta name="description" content="        Probability Overview    Probability Overview Many fundamental aspects of data science, including data design, rely on uncertain phenomenon. The laws ...">
+
+  <link rel="canonical" href="https://cp71.github.io/textbook/ch/02/design_prob_overview.html">
+  <link rel="alternate" type="application/rss+xml" title="Principles and Techniques of Data Science" href="https://cp71.github.io/textbook/feed.xml">
+
+  <meta property="og:url"         content="https://cp71.github.io/textbook/ch/02/design_prob_overview.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Probability Overview" />
+<meta property="og:description" content="        Probability Overview    Probability Overview Many fundamental aspects of data science, including data design, rely on uncertain phenomenon. The laws ..." />
+<meta property="og:image"       content="" />
+
+<meta name="twitter:card" content="summary">
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": "https://cp71.github.io/textbook/ch/02/design_prob_overview.html",
+  "headline": "Probability Overview",
+  "datePublished": "2020-01-15T20:58:13+00:00",
+  "dateModified": "2020-01-15T20:58:13+00:00",
+  "description": "        Probability Overview    Probability Overview Many fundamental aspects of data science, including data design, rely on uncertain phenomenon. The laws ...",
+  "author": {
+    "@type": "Person",
+    "name": "Sam Lau, Joey Gonzalez, and Deborah Nolan"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://cp71.github.io/textbook",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://cp71.github.io/textbook",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/textbook/assets/css/styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css ">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/textbook/images/logo/favicon.ico">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<!-- (mostly) copied from nbconvert configuration -->
+<!-- https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/mathjax.tpl -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    // Center justify equations in code and markdown cells. Elsewhere
+    // we use CSS to left justify single line equations in code cells.
+    displayAlign: 'center',
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}},
+        linebreaks: { automatic: true },
+    }
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML' async></script>
+
+  <!-- DOM updating function -->
+  <script>
+const runWhenDOMLoaded = cb => {
+  if (document.readyState != 'loading') {
+    cb()
+  } else if (document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', cb)
+  } else {
+    document.attachEvent('onreadystatechange', function() {
+      if (document.readyState == 'complete') cb()
+    })
+  }
+}
+
+// Helper function to init things quickly
+initFunction = function(myfunc) {
+  runWhenDOMLoaded(myfunc);
+  document.addEventListener('turbolinks:load', myfunc);
+};
+</script>
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/textbook';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" async></script>
+  <script>
+const initAnchors = () => {
+  if (window.anchors === undefined) {
+    setTimeout(initAnchors, 250)
+    return
+  }
+  anchors.add("main h1, main h2, main h3, main h4")
+}
+
+initFunction(initAnchors);
+</script>
+
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Selectors for elements on the page -->
+  <script>
+/**
+ * Select various elements on the page for later use
+ */
+
+// IDs we'll attach to cells
+const codeCellId = index => `codecell${index}`
+const inputCellId = index => `inputcell${index}`
+
+pageElements = {}
+
+// All code cells
+findCodeCells = function() {
+    var codeCells = document.querySelectorAll('div.c-textbook__content > div.highlighter-rouge > div.highlight > pre, div.input_area pre, div.text_cell_render div.highlight pre')
+    pageElements['codeCells'] = codeCells;
+
+    codeCells.forEach((codeCell, index) => {
+      const id = codeCellId(index)
+      codeCell.setAttribute('id', id)
+    })
+};
+
+initFunction(findCodeCells);
+
+// All cells in general
+findInputCells = function() {
+    var inputCells = document.querySelectorAll('div.jb_cell')
+    pageElements['inputCells'] = inputCells;
+
+    inputCells.forEach((inputCell, index) => {
+        const id = inputCellId(index)
+        inputCell.setAttribute('id', id)
+    })
+};
+
+initFunction(findInputCells);
+</script>
+
+  <!-- Load nbinteract for widgets -->
+  
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+
+  <!-- Load the auto-generating TOC -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js" async></script>
+<script>
+const initToc = () => {
+  if (window.tocbot === undefined) {
+    setTimeout(initToc, 250)
+    return
+  }
+
+  // Check whether we have any sidebar content. If not, then show the sidebar earlier.
+  var SIDEBAR_CONTENT_TAGS = ['.tag_full_width', '.tag_popout'];
+  var sidebar_content_query = SIDEBAR_CONTENT_TAGS.join(', ')
+  if (document.querySelectorAll(sidebar_content_query).length === 0) {
+    document.querySelector('nav.onthispage').classList.add('no_sidebar_content')
+  }
+
+  // Initialize the TOC bot
+  tocbot.init({
+    tocSelector: 'nav.onthispage',
+    contentSelector: '.c-textbook__content',
+    headingSelector: 'h2, h3',
+    orderedList: false,
+    collapseDepth: 6,
+    listClass: 'toc__menu',
+    activeListItemClass: "",  // Not using
+    activeLinkClass: "", // Not using
+  });
+
+}
+initFunction(initToc);
+</script>
+
+
+  <!-- Google analytics -->
+  <script src="/textbook/assets/js/ga.js" async></script>
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script>
+
+  <!-- Load custom website scripts -->
+  <script src="/textbook/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/textbook/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/textbook/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" async></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+
+  <!-- Load JS that depends on site variables -->
+  <script>
+/**
+ * Set up copy/paste for code blocks
+ */
+const clipboardButton = id =>
+  `<a id="copy-button-${id}" class="btn copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#${id}">
+    <img src="/textbook/assets/images/copy-button.svg" alt="Copy to clipboard">
+  </a>`
+
+// Clears selected text since ClipboardJS will select the text when copying
+const clearSelection = () => {
+  if (window.getSelection) {
+    window.getSelection().removeAllRanges()
+  } else if (document.selection) {
+    document.selection.empty()
+  }
+}
+
+// Changes tooltip text for two seconds, then changes it back
+const temporarilyChangeTooltip = (el, newText) => {
+  const oldText = el.getAttribute('data-tooltip')
+  el.setAttribute('data-tooltip', newText)
+  setTimeout(() => el.setAttribute('data-tooltip', oldText), 2000)
+}
+
+const addCopyButtonToCodeCells = () => {
+  // If ClipboardJS hasn't loaded, wait a bit and try again. This
+  // happens because we load ClipboardJS asynchronously.
+  if (window.ClipboardJS === undefined) {
+    setTimeout(addCopyButtonToCodeCells, 250)
+    return
+  }
+
+  pageElements['codeCells'].forEach((codeCell) => {
+    const id = codeCell.getAttribute('id')
+    if (document.getElementById("copy-button" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', clipboardButton(id));
+    }
+  })
+
+  const clipboard = new ClipboardJS('.copybtn')
+  clipboard.on('success', event => {
+    clearSelection()
+    temporarilyChangeTooltip(event.trigger, 'Copied!')
+  })
+
+  clipboard.on('error', event => {
+    temporarilyChangeTooltip(event.trigger, 'Failed to copy')
+  })
+
+  // Get rid of clipboard before the next page visit to avoid memory leak
+  document.addEventListener('turbolinks:before-visit', () =>
+    clipboard.destroy()
+  )
+}
+
+initFunction(addCopyButtonToCodeCells);
+</script>
+
+
+  <!-- Hide cell code -->
+  <script>
+    /**
+    Add buttons to hide code cells
+    */
+
+
+    var setCodeCellVisibility = function (inputField, kind) {
+        // Update the image and class for hidden
+        var id = inputField.getAttribute('data-id');
+        var codeCell = document.querySelector(`#${id} div.highlight`);
+
+        if (kind === "visible") {
+            codeCell.classList.remove('hidden');
+            inputField.checked = true;
+        } else {
+            codeCell.classList.add('hidden');
+            inputField.checked = false;
+        }
+    }
+
+    var toggleCodeCellVisibility = function (event) {
+        // The label is clicked, and now we decide what to do based on the input field's clicked status
+        if (event.target.tagName === "LABEL") {
+            var inputField = event.target.previousElementSibling;
+        } else {
+            // It is the span inside the target
+            var inputField = event.target.parentElement.previousElementSibling;
+        }
+
+        if (inputField.checked === true) {
+            setCodeCellVisibility(inputField, "visible");
+        } else {
+            setCodeCellVisibility(inputField, "hidden");
+        }
+    }
+
+
+    // Button constructor
+    const hideCodeButton = id => `<input class="hidebtn" type="checkbox" id="hidebtn${id}" data-id="${id}"><label title="Toggle cell" for="hidebtn${id}" class="plusminus"><span class="pm_h"></span><span class="pm_v"></span></label>`
+
+    var addHideButton = function () {
+        // If a hide button is already added, don't add another
+        if (document.querySelector('div.tag_hide_input input') !== null) {
+            return;
+        }
+
+        // Find the input cells and add a hide button
+        pageElements['inputCells'].forEach(function (inputCell) {
+            if (!inputCell.classList.contains("tag_hide_input")) {
+                // Skip the cell if it doesn't have a hidecode class
+                return;
+            }
+
+            const id = inputCell.getAttribute('id')
+
+            // Insert the button just inside the end of the next div
+            inputCell.querySelector('div.input').insertAdjacentHTML('beforeend', hideCodeButton(id))
+
+            // Set up the visibility toggle
+            hideLink = document.querySelector(`#${id} div.inner_cell + input + label`);
+            hideLink.addEventListener('click', toggleCodeCellVisibility)
+        });
+    }
+
+
+    // Initialize the hide buttos
+    var initHiddenCells = function () {
+        // Add hide buttons to the cells
+        addHideButton();
+
+        // Toggle the code cells that should be hidden
+        document.querySelectorAll('div.tag_hide_input input').forEach(function (item) {
+            setCodeCellVisibility(item, 'hidden');
+            item.checked = true;
+        })
+    }
+
+    initFunction(initHiddenCells);
+
+</script>
+
+  <!-- Printing the screen -->
+  <!-- Include nbinteract for interactive widgets -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js" async></script>
+<script>
+printContent = () => {
+    // MathJax displays a second version of any math for assistive devices etc.
+    // This prevents double-rendering in the PDF output.
+    var ignoreAssistList = [];
+    assistives = document.querySelectorAll('.MathJax_Display span.MJX_Assistive_MathML').forEach((element, index) => {
+        var thisId = 'MathJax-assistive-' + index.toString();
+        element.setAttribute('id', thisId);
+        ignoreAssistList.push(thisId)
+    });
+
+    // Print the actual content object
+    printJS({
+        printable: 'textbook_content',
+        type: 'html',
+        css: "/textbook/assets/css/styles.css",
+        scanStyles: false,
+        targetStyles: ["*"],
+        ignoreElements: ignoreAssistList
+    })
+};
+
+initPrint = () => {
+    document.querySelector('#interact-button-print').addEventListener('click', printContent)
+}
+
+initFunction(initPrint)
+</script>
+
+</head>
+
+  <body>
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      <nav id="js-sidebar" class="c-textbook__sidebar"><h2 class="c-sidebar__title">Principles and Techniques of Data Science</h2>
+  <ul class="c-sidebar__chapters"><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="http://ds100.org/"
+        >Data 100 Homepage
+        </a></li>
+        <li class="c-sidebar__chapter">
+          <a class="c-sidebar__entry"
+            href="/textbook/search.html"
+          >
+            Search This Book
+          </a>
+        </li>
+        <li class="c-sidebar__divider"></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/intro.html"
+        >Introduction
+        </a></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/about_this_book.html"
+        >About This Book
+        </a></li><li class="c-sidebar__divider"></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/01/lifecycle_intro.html"
+        >1. The Data Science Lifecycle
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/01/lifecycle_students_1.html"
+                >1.1 The Students of Data 100
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/01/lifecycle_students_2.html"
+                >1.2 Exploring the Data
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/01/lifecycle_students_3.html"
+                >1.3 What's in a Name?
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/02/design_intro.html"
+        >2. Data Design
+        </a><ul class="c-sidebar__sections "><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/02/design_dewey_truman.html"
+                >2.1 Dewey Defeats Truman
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry c-sidebar__entry--active"
+                  href="/textbook/ch/02/design_prob_overview.html"
+                >2.2 Probability Overview
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/02/design_sampling.html"
+                >2.3 Probability Sampling
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/02/design_srs_vs_big_data.html"
+                >2.4 SRS vs. "Big Data"
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/03/pandas_intro.html"
+        >3. Tabular Data and pandas
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/03/pandas_structure.html"
+                >3.1 Structure
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/03/pandas_indexes.html"
+                >3.2 Indexes, Slicing, and Sorting
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/03/pandas_grouping_pivoting.html"
+                >3.3 Grouping and Pivoting
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/03/pandas_apply_strings_plotting.html"
+                >3.4 Apply, Strings, and Plotting
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/04/eda_intro.html"
+        >4. Exploratory Data Analysis
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/04/eda_data_types.html"
+                >4.1 Data Types
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href=".html"
+                >4.2 Distributions [in progress]
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href=".html"
+                >4.3 Associations [in progress]
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/05/cleaning_intro.html"
+        >5. Data Cleaning
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_calls.html"
+                >5.1 Cleaning the Calls Dataset
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_stops.html"
+                >5.2 Cleaning the Stops Dataset
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_structure.html"
+                >5.3 Structure and Joins
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_granularity.html"
+                >5.4 Granularity
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_scope.html"
+                >5.5 Scope
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_temp.html"
+                >5.6 Temporality
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/05/cleaning_faithfulness.html"
+                >5.7 Faithfulness
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/06/viz_intro.html"
+        >6. Data Visualization
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_quantitative.html"
+                >6.1 Quantitative Data
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_qualitative.html"
+                >6.2 Qualitative Data
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_matplotlib.html"
+                >6.3 Customizing Plots
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_principles.html"
+                >6.4 Principles of Visualization
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_principles_2.html"
+                >6.5 Principles of Visualization 2
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/06/viz_philosophy.html"
+                >6.6 Visualization Philosophy
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/07/web_intro.html"
+        >7. Web Technologies
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/07/web_http.html"
+                >7.1 HTTP
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/08/text_intro.html"
+        >8. Working With Text
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/08/text_strings.html"
+                >8.1 Python String Methods
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/08/text_regex.html"
+                >8.2 Regular Expressions
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/08/text_re.html"
+                >8.3 Regex in Python and pandas
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/09/sql_intro.html"
+        >9. Databases and SQL
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/09/sql_rdbms.html"
+                >9.1 Relational Databases
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/09/sql_basics.html"
+                >9.2 SQL Queries
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/09/sql_joins.html"
+                >9.3 SQL Joins
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/10/modeling_intro.html"
+        >10. Modeling and Estimation
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/10/modeling_simple.html"
+                >10.1 A Simple Model
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/10/modeling_loss_functions.html"
+                >10.2 Loss Functions
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/10/modeling_abs_huber.html"
+                >10.3 Absolute Cost and Huber Cost
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/11/gradient_descent.html"
+        >11. Gradient Descent
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/11/gradient_basics.html"
+                >11.1 Basic Numerical Optimization
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/11/gradient_descent_define.html"
+                >11.2 Defining Gradient Descent
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/11/gradient_convexity.html"
+                >11.3 Convexity
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/11/gradient_stochastic.html"
+                >11.4 Stochastic Gradient Descent
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/12/prob_and_gen.html"
+        >12. Probability and Generalization
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/12/prob_random_vars.html"
+                >12.1 Random Variables
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/12/prob_exp_var.html"
+                >12.2 Expectation and Variance
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/12/prob_risk.html"
+                >12.3 Risk
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/13/linear_models.html"
+        >13. Linear Regression
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/13/linear_tips.html"
+                >13.1 Defining a Simple Linear Model
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/13/linear_grad.html"
+                >13.2 Fitting the Model
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/13/linear_multiple.html"
+                >13.3 Multiple Linear Regression
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/13/linear_projection.html"
+                >13.4 A Geometric Perspective
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/13/linear_case_study.html"
+                >13.5 Linear Regression Case Study
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/14/feature_engineering.html"
+        >14. Feature Engineering
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/14/feature_one_hot.html"
+                >14.1 One-Hot Encoding
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/14/feature_polynomial.html"
+                >14.2 Polynomial Regression
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/15/bias_intro.html"
+        >15. Bias-Variance Tradeoff
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/15/bias_risk.html"
+                >15.1 Risk and Cost Minimization
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/15/bias_modeling.html"
+                >15.2 Model Bias and Variance
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/15/bias_cv.html"
+                >15.3 Cross Validation
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/16/reg_intro.html"
+        >16. Regularization
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/16/reg_intuition.html"
+                >16.1 Regularization Intuition
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/16/reg_ridge.html"
+                >16.2 L2 Regularization
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/16/reg_lasso.html"
+                >16.3 L1 Regularization
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/17/classification_intro.html"
+        >17. Classification
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_prob.html"
+                >17.1 Regression on Probabilities
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_log_model.html"
+                >17.2 Logistic Model
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_cost.html"
+                >17.3 Cross-Entropy Loss
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_log_reg.html"
+                >17.4 Using Logistic Regression
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_cost_justification.html"
+                >17.5 Justifying Cross-Entropy Loss
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_sgd.html"
+                >17.6 Fitting a Logistic Model
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_sensitivity_specificity.html"
+                >17.7 Evaluating Logistic Models
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/17/classification_multiclass.html"
+                >17.8 Multiclass Classification
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/18/hyp_intro.html"
+        >18. Statistical Inference
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/18/hyp_introduction.html"
+                >18.1 Introduction to Hypothesis Testing
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/18/hyp_introduction_part2.html"
+                >18.2 Permutation Testing
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/18/hyp_regression.html"
+                >18.3 Bootstrapping for Linear Regression
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/18/hyp_studentized.html"
+                >18.4 Studentized Bootstrap
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/18/hyp_phacking.html"
+                >18.5 P-Hacking
+                </a></li></ul></li><li class="c-sidebar__divider"></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/19/vector_space_review.html"
+        >Appendix: Vector Space Review
+        </a></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/20/ref_intro.html"
+        >Appendix: Reference Tables
+        </a><ul class="c-sidebar__sections u-hidden-visually"><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/20/ref_pandas.html"
+                >pandas
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/20/ref_seaborn.html"
+                >seaborn
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/20/ref_matplotlib.html"
+                >matplotlib
+                </a></li><li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/textbook/ch/20/ref_sklearn.html"
+                >scikit-learn
+                </a></li></ul></li><li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/textbook/ch/21/contributors.html"
+        >Appendix: Contributors
+        </a></li></ul>
+  <p class="sidebar_footer">Powered by <a href="https://github.com/jupyter/jupyter-book">Jupyter Book</a></p>
+</nav>
+
+      
+      <div class="c-topbar" id="top-navbar">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <div class="c-topbar__buttons">
+    <button
+      id="js-sidebar-toggle"
+      class="hamburger hamburger--arrowalt is-active"
+    >
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="buttons">
+<div class="download-buttons-dropdown">
+    <button id="dropdown-button-trigger" class="interact-button"><i class="fa fa-download"></i></button>
+    <div class="download-buttons">
+        <a href="/textbook/content/ch/02/design_prob_overview.ipynb" download>
+        <button id="interact-button-download" class="interact-button">ORIG</button>
+        </a>
+        
+        <a id="interact-button-print"><button id="interact-button-download" class="interact-button">PDF</button></a>
+    </div>
+</div>
+
+  
+  
+  
+  
+
+
+</div>
+
+  </div>
+  <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+  <aside class="sidebar__right">
+    <header><h4 class="nav__title"><i class="fa fa-list"></i>   On this page</h4></header>
+    <nav class="onthispage">
+    </nav>
+  </aside>
+  <a href="/textbook/search.html" class="topbar-right-button" id="search-button"><i class="fa fa-search"></i></a>
+</div>
+
+      <main class="c-textbook__page" tabindex="-1">
+            <div class="c-textbook__content" id="textbook_content">
+                  <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Probability Overview</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Probability-Overview">Probability Overview<a class="anchor-link" href="#Probability-Overview"> </a></h2><p>Many fundamental aspects of data science, including data design, rely on uncertain phenomenon. The laws of probability allow us to quantify this uncertainty. In this section, we will provide a quick review of important probability concepts for this course.</p>
+<p>Suppose we toss two coins with one side labeled heads ($H$) and the other labeled tails ($T$). We call the action of tossing the coins and observing the results our <strong>experiment</strong>. The <strong>outcome space</strong> $\Omega$ consists of all the possible outcomes of an experiment. In this experiment, our outcome space consists of the following outcomes: $\Omega = \{HH, HT, TH, TT\}$.</p>
+<p>An <strong>event</strong> is any subset of the outcome space. For example, "getting one tails and one heads" is an event for the coin toss experiment. This event consists of the outcomes $\{HT, TH\}$. We use the notation $P(\text{event})$ to represent the probability of an event occurring, in this case, $P(\text{one heads and one tails})$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Probability-of-Events">Probability of Events<a class="anchor-link" href="#Probability-of-Events"> </a></h2><p>In this course, we will typically deal with outcome spaces where each outcome is equally likely to occur. These spaces have simple probability calculations. The probability of an event occurring is equal to the proportion of outcomes in the event, or the number of outcomes in the event divided by the total number of outcomes in the outcome space:</p>
+$$
+\begin{aligned}
+P(\text{event})
+&amp;= \frac{\text{# of outcomes in event}}{\text{# of all possible outcomes}} \\
+&amp;= \text{proportion of outcomes in event} \\
+\end{aligned}
+$$<p>In the coin toss experiment, the events $\{HH, HT, TH, TT\}$ are all equally likely to occur. To calculate $P(\text{one heads and one tails})$, we see that there are two outcomes in the event and four outcomes total:</p>
+$$
+\begin{aligned}
+P(\text{one heads and one tails}) = \frac{2}{4} = \frac{1}{2}
+\end{aligned}
+$$<p>There are three fundamental axioms of probability:</p>
+<ol>
+<li>The probability of an event is a real number between 0 and 1, inclusive: $0 \leq P(\text{event}) \leq 1$.</li>
+<li>The probability of the entire outcome space is 1: $P(\Omega) = 1$.</li>
+</ol>
+<p>The third axiom involves mutually exclusive events.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-or-B">A or B<a class="anchor-link" href="#A-or-B"> </a></h2><p>We often want to calculate the probability that event $A$ <em>or</em> event $B$ occurs. For example, a polling agency might want to know the probability that a randomly selected US citizen is either 17 or 18 years old.</p>
+<p>We state that events are <em>mutually exclusive</em> when at most one of them can happen. If $A$ is the event that we select an 17-year-old and $B$ is the event that we select a 18-year old, $A$ and $B$ are mutually exclusive because a person cannot be both 17 and 18 at the same time.</p>
+<p>The probability $P(A \cup B)$ that $A$ or $B$ occurs is simple to calculate when $A$ and $B$ are mutually exclusive:</p>
+$$
+\begin{aligned}
+P(A \cup B) = P(A) + P(B)
+\end{aligned}
+$$<p>This is the third axiom of probability, the addition rule.</p>
+<p>In <a href="https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_QTP2&amp;prodType=table">the 2010 census</a>, 1.4% of US citizens were 17 years old and 1.5% were 18. Thus, for a randomly chosen US citizen in 2010, $P(A) = 0.014$ and $P(B) = 0.015$, giving $ P(A \cup B) = P(A) + P(B) = 0.029 $.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To understand this rule, consider the following Venn diagram from the <a href="http://prob140.org/textbook/chapters/Chapter_02/01_Addition">Prob 140 textbook</a>:</p>
+<p><img src="http://prob140.org/textbook/images/Chapter_02/01_Addition_2_0.png" alt="addition_venn"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When events $A$ and $B$ are mutually exclusive, there are no outcomes that appear in both $A$ and $B$. Thus, if $A$ has 5 possible outcomes and $B$ has 4 possible outcomes, we know that the event $A \cup B$ has 9 possible outcomes.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unfortunately, when $A$ and $B$ are not mutually exclusive, the simple addition rule does not apply. Suppose we want to calculate the probability that in two coin flips, exactly one flip is heads or exactly one flip is tails.</p>
+<p>If $A$ is the event that exactly one heads appears, $P(A) = \frac{2}{4}$ since $A$ consists of the outcomes $\{ HT, TH \}$ and there are four outcomes total. If $B$ is the event that exactly one tails appears, $P(B) = \frac{2}{4}$ since $B$ consists of the outcomes $\{ HT, TH \}$. However, the event $A \cup B$ only contains two outcomes since the outcomes are the same in both $A$ and $B$: $P(A \cup B) = \frac{1}{2} $. Blindly applying the addition rule results in an incorrect conclusion. There are outcomes that appear in both $A$ and $B$; adding the number of outcomes in $A$ and $B$ counts them twice. In the image below, we illustrate the fact that the overlapping region of the Venn diagram gets shaded twice, once by $A$ and once by $B$.</p>
+<p><img src="http://prob140.org/textbook/images/Chapter_05/01_Bounding_the_Chance_of_a_Union_2_0.png" alt="AB_overlap"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To compensate for this overlap, we need to subtract out the the probability $P(A \cap B)$ that both $A$ and $B$ occur. To calculate the probability that either of two non-mutually exclusive events occurs, we use:</p>
+$$
+\begin{aligned}
+P(A \cup B) = P(A) + P(B) - P(A \cap B)
+\end{aligned}
+$$<p>Notice that when $A$ and $B$ are mutually exclusive, $ P(A \cap B) = 0 $ and the equation simplifies to the addition rule above.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-and-B">A and B<a class="anchor-link" href="#A-and-B"> </a></h2><p>We also often wish to calculate probability that both event $A$ and $B$ occur. Suppose we have a class with only three students, whom we'll label as $X$, $Y$, and $Z$. What is the probability that drawing a sample of size 2 without replacement results in $Y$, then $X$?</p>
+<p>One simple way to calculate this probability is to enumerate the entire outcome space:</p>
+$$
+\begin{aligned}
+\Omega = \{ XY, XZ, YX, YZ, ZX, ZY \}
+\end{aligned}
+$$<p>Since there our event consists of only one outcome:</p>
+$$
+\begin{aligned}
+P(YX) = \frac{1}{6}
+\end{aligned}
+$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also calculate this probability by noticing that this event can be broken down into two events that happen in sequence, the event of drawing $Y$ as the first student, then the event of drawing $X$ after drawing $Y$.</p>
+<p>The probability of drawing $Y$ as the first student is $ \frac{1}{3} $ since there are three outcomes in the outcome space ($X$, $Y$, and $Z$) and our event only contains one.</p>
+<p>After drawing $Y$, the outcome space of the second event only contains $ \{ X, Z \} $. Thus, the probability of drawing $X$ as the second student is $ \frac{1}{2} $. This probability is called the <em>conditional probability</em> of drawing $X$ second given that $Y$ was drawn first. We use the notation $P(B | A)$ to describe the conditional probability of an event $B$ occurring given event $A$ occurs.</p>
+<p>Now, observe that:</p>
+$$
+\begin{aligned}
+P(YX) &amp;= \frac{1}{6} \\
+&amp;= \frac{1}{3} \cdot \frac{1}{2} \\
+&amp;= P(\text{Y first}) * P(\text{X second} | \text{Y first})
+\end{aligned}
+$$<p>This happens to be a general rule of probability, the multiplication rule. For any events $A$ and $B$, the probability that both $A$ and $B$ occur is:</p>
+$$
+\begin{aligned}
+P(AB) = P(A) P(B | A)
+\end{aligned}
+$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In certain cases, two events may be <em>independent</em>. That is, the probability that $B$ occurs does not change after $A$ occurs. For example, the event that a 6 occurs on a dice roll does not affect the probability that a 5 occurs on the next dice roll. If $A$ and $B$ are independent, $ P(B | A) = P(B) $. This simplifies our multiplication rule:</p>
+$$
+\begin{aligned}
+P(AB) = P(A)P(B) \qquad \text{For independent $A$ and $B$}
+\end{aligned}
+$$<p>Although this simplification is extremely convenient for calculation, many real-world events are not independent even if their relationship is not obvious at a first glance. For example, the event that a randomly selected US citizen is over 90 years old is not independent from the event that the citizen is male—given that the person is over 90, the person is almost twice as likely to be female than male.</p>
+<p>As data scientists, we must examine assumptions of independence very closely! The US housing crash of 2008 might have been avoided if the bankers did not assume that housing markets in different cities moved independently of one another (<a href="https://www.economist.com/schools-brief/2013/09/07/crash-course">link to an Economist article</a>).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
+            </div>
+            <nav class="c-page__nav">
+  
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/textbook/ch/02/design_dewey_truman.html">
+      〈 <span class="u-margin-right-tiny"></span> 
+    </a>
+  
+
+  
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/textbook/ch/02/design_sampling.html">
+       <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+            <footer>
+  <p class="footer"></p>
+</footer>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
