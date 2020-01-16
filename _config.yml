@@ -32,7 +32,7 @@ description: >-
   4.0 International (CC BY-NC-ND 4.0)
 
 baseurl: /dse_textbook 
-url: https://cp71.github.io
+url: https://nyu-cds-undergraduate-program.github.io
 
 #######################################################################################
 # Jupyter Book settings
