@@ -1,4 +1,4 @@
-# Inferential Thinking by NYU CDS
+# Inferential Thinking by NYU CDS Staff
 
 This repository holds a Jekyll-based version of the Data 8 textbook.
 
