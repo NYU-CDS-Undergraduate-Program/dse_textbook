@@ -4,7 +4,7 @@ Computational and Inferential Thinking
 The Foundations of Data Science
 -------------------------------
 
-**By NYU CDS**
+**By Ani Adhikari and John DeNero**
 
 Contributions by [David Wagner](https://www.cs.berkeley.edu/~daw/) and Henry Milner
 
